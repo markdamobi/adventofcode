@@ -17,6 +17,7 @@ class Mover
     elsif direction == :up
       if x > 0 && x > y && cannot_move_right
         @y += 1
+        @cannot_move_right = false
         return true
       end
     elsif direction == :left
@@ -29,6 +30,7 @@ class Mover
     elsif direction == :down
       if x < 0 && x < y && cannot_move_left
         @y -= 1
+        @cannot_move_left = false
         return true
       end
     end
