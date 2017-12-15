@@ -20,11 +20,36 @@ class Mover
     true
   end
 
+
+  def jump2
+    return false if out_of_bounds?
+    step = offsets[position]
+    new_pos = position + step
+    if step >= 3
+      @offsets[position] -= 1
+    else
+      @offsets[position] += 1
+    end
+    @position = new_pos
+    true
+  end
+
+
   def escape
     num_steps = 0
     return num_steps if out_of_bounds?
     until out_of_bounds?
       jump
+      num_steps += 1
+    end
+    num_steps
+  end
+
+  def escape2
+    num_steps = 0
+    return num_steps if out_of_bounds?
+    until out_of_bounds?
+      jump2
       num_steps += 1
     end
     num_steps
@@ -42,4 +67,10 @@ def run
   input = read_arr('2017/p5_input.txt')
   m = Mover.new(input)
   m.escape
+end
+
+def run2
+  input = read_arr('2017/p5_input.txt')
+  m = Mover.new(input)
+  m.escape2
 end
