@@ -11,6 +11,7 @@ class Tree
   def initialize(relationships)
     set_relations(relationships)
     set_base
+    set_tower_weights(base)
   end
 
   def set_relations(relationships)
@@ -20,10 +21,9 @@ class Tree
       weight = details[1].to_i
       kids = details[2..-1]
       @relations[key] = {weight: weight, kids: kids}
-      # kids.each{ |kid| @relations[kid][:parent] = key }
     end
 
-    with_kids.each{|k,v| v[:kids].each{|kid| @relations[kid][:parent] = k}}
+    with_kids.each{|k,v| v[:kids].each{|kid| @relations[kid][:parent] = k; @relations[kid][:siblings]=v[:kids]-[kid]}}
   end
 
   def with_kids
@@ -39,6 +39,23 @@ class Tree
     @base = relations.keys.find{|k| !all_children.include? k}
   end
 
+  def set_tower_weights(program)
+    if relations[program][:tower_weight].present?
+      return
+    elsif relations[program][:kids].blank?
+      @relations[program][:tower_weight] = relations[program][:weight]
+      return
+    else
+      kids = relations[program][:kids]
+      kids.each{|kid| set_tower_weights(kid)}
+      @relations[program][:tower_weight] = relations[program][:weight] + kids.map{|kid| relations[kid][:tower_weight]}.sum
+    end
+  end
+
+  def get_siblings_with_discrepancy
+    parent =   relations[relations.find{|k,v| [v[:tower_weight]] != relations[k][:siblings].map{|s| relations[s][:tower_weight]}.uniq }[0]][:parent]
+    relations[parent][:kids].map{|k| [k, relations[k][:tower_weight]]}
+  end
 end
 
 
@@ -46,6 +63,14 @@ def run1
   relationships = read_tree('2017/p7_input.txt')
   tree = Tree.new(relationships)
   tree.base
+end
+
+def run2
+  relationships = read_tree('2017/p7_input.txt')
+  tree = Tree.new(relationships)
+  tree.get_siblings_with_discrepancy
+  # [["jriph", 2102], ["bykobk", 2097], ["uylvg", 2097], ["yxhntq", 2097], ["ywdvft", 2097]]
+  # this means we need to subtract 5 from the weight value of jriph.
 end
 
 def testrun
