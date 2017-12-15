@@ -20,7 +20,18 @@ class Tree
       weight = details[1].to_i
       kids = details[2..-1]
       @relations[key] = {weight: weight, kids: kids}
+      # kids.each{ |kid| @relations[kid][:parent] = key }
     end
+
+    with_kids.each{|k,v| v[:kids].each{|kid| @relations[kid][:parent] = k}}
+  end
+
+  def with_kids
+    relations.deep_dup.keep_if{ |key, details| details[:kids].present? }
+  end
+
+  def with_no_kids
+    relations.deep_dup.keep_if{ |key, details| details[:kids].blank? }
   end
 
   def set_base
