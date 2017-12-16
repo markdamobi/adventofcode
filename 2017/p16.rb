@@ -5,11 +5,12 @@ def read_file(file)
 end
 
 class Dance
-  attr_reader :moves, :programs
+  attr_reader :moves, :programs, :original_position
 
   def initialize(dance_moves)
     @moves = dance_moves
     @programs = ("a".."p").to_a
+    @original_position = ("a".."p").to_a
     dance
   end
 
@@ -36,11 +37,36 @@ class Dance
       partner(m) if m.starts_with? "p"
     end
   end
+
+  ## so inefficient. don't even think about it.
+  # def billion
+  #   (1000000000-1).times{dance}
+  # end
+
+  def billionth_dance
+    (1000000000%get_period).times{dance}
+  end
+
+  def get_period
+    c = 1
+    loop do
+      dance
+      c += 1
+      break if programs == original_position
+    end
+    c
+  end
 end
 
 
 def run1
   # s = SomeStuff.new(read_file('2017/p16_test.txt'))
   d = Dance.new(read_file('2017/p16_input.txt'))
+  d.programs
+end
+
+def run2
+  d = Dance.new(read_file('2017/p16_input.txt'))
+  d.billionth_dance
   d.programs
 end
