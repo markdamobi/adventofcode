@@ -31,3 +31,7 @@ def run1
   p k.list
   k.list[0] * k.list[1]
 end
+
+def run2
+  puts "part 2 of has too many instruction. I will re-visit this later."
+end
