@@ -81,20 +81,21 @@ class Sound
 
   def jgz(inst)
     dir = inst.split(" ")
-    register, r2 = dir[1], dir[2]
+    r1, r2 = dir[1], dir[2]
 
-    if @registers[r2]
-      num = @registers[r2][:val]
+    if @registers[r1]
+      num1 = @registers[r1][:val]
     else
-      num = r2.to_i
+      num1 = r1.to_i
+    end
+    if @registers[r2]
+      num2 = @registers[r2][:val]
+    else
+      num2 = r2.to_i
     end
 
-    p inst
-    p register
-    p registers
-
-    if (registers[register] && registers[register][:val] > 0) || (registers[register].blank? && register.to_i >0)
-      @pointer += num
+    if num1 > 0
+      @pointer += num2
     else
       @pointer += 1
     end
@@ -128,7 +129,7 @@ end
 
 
 
-#### Solutions not complete. Instructions not quite clear. 
+#### Solutions not complete. Instructions not quite clear.
 def run1
   # s = Sound.new(read_file('2017/p18_test.txt'))
   s = Sound.new(read_file('2017/p18_input.txt'))
