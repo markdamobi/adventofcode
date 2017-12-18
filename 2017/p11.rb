@@ -7,7 +7,7 @@ end
 class Hex
   attr_reader :directions, :origin, :x, :y, :dist
 
-  def initialize(directions)
+  def initialize(directions = [])
     @directions = directions
     @origin = [0,0]
     ### note: actual x coordinate needs to be multiplied by square root of 3.
@@ -60,7 +60,7 @@ class Hex
   end
 
   def e_or_w?
-    x != 0 && y == 9
+    x != 0 && y == 0
   end
 
   def origin?
@@ -69,10 +69,11 @@ class Hex
 
   def d_from_origin
     if e_or_w?
-      @dist = x
+      @dist = x.abs
     else
       @dist = (x.abs + y.abs)/2
     end
+    dist
   end
 
   def coord
@@ -86,7 +87,7 @@ end
 
 
 ## this solution passess all the test cases.
-## not sure why it doesn't work for the main input. 
+## not sure why it doesn't work for the main input.
 def run1
   # hex = Hex.new(read_file('2017/p11_test.txt'))
   hex = Hex.new(read_file('2017/p11_input.txt'))
