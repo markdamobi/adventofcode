@@ -10,7 +10,9 @@ class Hex
   def initialize(directions)
     @directions = directions
     @origin = [0,0]
-    @pointer = [0,0]
+    ### note: actual x coordinate needs to be multiplied by square root of 3.
+    @x, @y = [0,0]
+    # @pointer = [0,0]
 
   end
 
@@ -18,21 +20,21 @@ class Hex
     case dir
 
     when :n
-      @y += 1
+      @y += 2
     when :s
-      @y -= 1
+      @y -= 2
     when :ne
-      @x += 0.75
-      @y += 0.5
+      @x += 1
+      @y += 1
     when :se
-      @x += 0.75
-      @y -= 0.5
+      @x += 1
+      @y -= 1
     when :nw
-      @x -= 0.75
-      @y += 0.5
+      @x -= 1
+      @y += 1
     when :sw
-      @x -= 0.75
-      @y -= 0.5
+      @x -= 1
+      @y -= 1
     end
   end
 
