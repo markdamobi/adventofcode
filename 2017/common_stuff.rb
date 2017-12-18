@@ -14,7 +14,7 @@ end
 
 
 def run1
-  # s = SomeStuff.new(read_file('2017/p16_txt.txt'))
+  # s = SomeStuff.new(read_file('2017/p16_test.txt'))
   s = SomeStuff.new(read_file('2017/p16_input.txt'))
   s.some_method
 end
