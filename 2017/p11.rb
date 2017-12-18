@@ -10,62 +10,46 @@ class Hex
   def initialize(directions = [])
     @directions = directions
     @origin = [0,0]
-    ### note: actual x coordinate needs to be multiplied by square root of 3.
+    ### note: x pos is technically x * sqrt(3). but it doesn't matter with the way it's handled.
     @x, @y = [0,0]
     @dist = 0
-    # @pointer = [0,0]
 
   end
 
   def move(dir)
     case dir
-
     when :n
       @y += 2
     when :s
       @y -= 2
     when :ne
-      @x += 1
-      @y += 1
+      @x += 1; @y += 1
     when :se
-      @x += 1
-      @y -= 1
+      @x += 1; @y -= 1
     when :nw
-      @x -= 1
-      @y += 1
+      @x -= 1; @y += 1
     when :sw
-      @x -= 1
-      @y -= 1
+      @x -= 1; @y -= 1
     end
   end
 
-  def ne?
-    x > 0 && y > 0
-  end
+  def ne?; x > 0 && y > 0; end
 
-  def se?
-    x > 0 && y < 0
-  end
+  def se?; x > 0 && y < 0; end
 
-  def nw?
-    x < 0 && y > 0
-  end
+  def nw?; x < 0 && y > 0; end
 
-  def sw?
-    x < 0 && y < 0
-  end
+  def sw?; x < 0 && y < 0; end
 
-  def n_or_s?
-    x == 0 && y != 0
-  end
+  def n_or_s?; x == 0 && y != 0; end
 
-  def e_or_w?
-    x != 0 && y == 0
-  end
+  def e_or_w?; x != 0 && y == 0; end
 
-  def origin?
-    coord == origin
-  end
+  def origin?; coord == origin; end
+
+  def coord; [x,y]; end
+
+  def travel; directions.each{|d| move(d.to_sym)}; end
 
   def d_from_origin
     if e_or_w?
@@ -76,13 +60,6 @@ class Hex
     dist
   end
 
-  def coord
-    [x,y]
-  end
-
-  def travel
-    directions.each{|d| move(d.to_sym)}
-  end
 end
 
 
