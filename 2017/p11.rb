@@ -5,16 +5,43 @@ def read_file(file)
 end
 
 class Hex
-  attr_reader :something
+  attr_reader :directions, :origin, :x, :y
 
   def initialize(directions)
     @directions = directions
     @origin = [0,0]
+    @pointer = [0,0]
 
+  end
+
+  def move(dir)
+    case dir
+
+    when :n
+      @y += 1
+    when :s
+      @y -= 1
+    when :ne
+      @x += 0.75
+      @y += 0.5
+    when :se
+      @x += 0.75
+      @y -= 0.5
+    when :nw
+      @x -= 0.75
+      @y += 0.5
+    when :sw
+      @x -= 0.75
+      @y -= 0.5
+    end
   end
 
   def distance(a, b)
 
+  end
+
+  def coord
+    [x,y]
   end
 end
 
