@@ -5,7 +5,7 @@ def read_file(file)
 end
 
 class Hex
-  attr_reader :directions, :origin, :x, :y, :dist
+  attr_reader :directions, :origin, :x, :y, :dist, :max_dist
 
   def initialize(directions = [])
     @directions = directions
@@ -13,6 +13,7 @@ class Hex
     ### note: x pos is technically x * sqrt(3). but it doesn't matter with the way it's handled.
     @x, @y = [0,0]
     @dist = 0
+    @max_dist = 0
 
   end
 
@@ -41,7 +42,13 @@ class Hex
   def e_or_w?; x != 0 && y == 0; end
   def origin?; coord == origin; end
   def coord; [x,y]; end
-  def travel; directions.each{|d| move(d.to_sym)}; end
+
+  def travel
+    directions.each do |d|
+      move(d.to_sym)
+      @max_dist = [max_dist, d_from_origin].max
+   end
+ end
 
   def d_from_origin
     if ((ne?||se?||nw?||sw?) && y.abs >= x.abs) || n_or_s?
@@ -53,9 +60,10 @@ class Hex
 
 end
 
-def run1
+def run
   # hex = Hex.new(read_file('2017/p11_test.txt'))
   hex = Hex.new(read_file('2017/p11_input.txt'))
   hex.travel
-  hex.d_from_origin
+  p hex.d_from_origin ## part1
+  p hex.max_dist ## part2
 end
