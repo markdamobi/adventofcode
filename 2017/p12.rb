@@ -42,6 +42,7 @@ def run1
   # plum = Plumber.new(read_file('2017/p12_test.txt'))
   plum = Plumber.new(read_file('2017/p12_input.txt'))
   plum.partition
-  plum.partitions.find{|part| part.include? 0}.count
 
+  p plum.partitions.find{|part| part.include? 0}.count
+  p plum.partitions.count
 end
