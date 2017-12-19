@@ -34,37 +34,25 @@ class Hex
   end
 
   def ne?; x > 0 && y > 0; end
-
   def se?; x > 0 && y < 0; end
-
   def nw?; x < 0 && y > 0; end
-
   def sw?; x < 0 && y < 0; end
-
   def n_or_s?; x == 0 && y != 0; end
-
   def e_or_w?; x != 0 && y == 0; end
-
   def origin?; coord == origin; end
-
   def coord; [x,y]; end
-
   def travel; directions.each{|d| move(d.to_sym)}; end
 
   def d_from_origin
-    if e_or_w?
-      @dist = x.abs
-    else
+    if ((ne?||se?||nw?||sw?) && y.abs >= x.abs) || n_or_s?
       @dist = (x.abs + y.abs)/2
+    else
+      @dist = x.abs
     end
-    dist
   end
 
 end
 
-
-## this solution passess all the test cases.
-## not sure why it doesn't work for the main input.
 def run1
   # hex = Hex.new(read_file('2017/p11_test.txt'))
   hex = Hex.new(read_file('2017/p11_input.txt'))
