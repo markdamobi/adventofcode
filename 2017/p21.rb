@@ -38,7 +38,7 @@ class Art
   def enhance
     block_size = board.size.even? ? 2 : 3
     num_of_positions = ( board.size / block_size )^2
-    @new_board = Array.new(board.size / block_size){Array.new}
+    @new_board = Array.new((board.size / block_size) * (block_size+1) ){Array.new}
 
     num_of_positions.each do |pos|
       block = get_block(block_size, pos)
@@ -46,6 +46,18 @@ class Art
       add_to_board(enhanced_block, pos)
     end
 
+    @board = new_board.deep_dup
+  end
+
+  def get_block(block_size, pos)
+    block = Array.new(block_size){Array.new}
+    start_y, start_x = get_start_coord(block_size, board.size, pos)
+    num_squares = (block_size)^2
+    num_squares.times do |i|
+      curr_y = (i / block_size) + start_y
+      curr_x = (i % block_size) + start_x
+      block[i / block_size][i % block_size] = board[curr_y][curr_x]
+    end
   end
 
   ## this assumes that board is prepared and ready to accept aditions.
