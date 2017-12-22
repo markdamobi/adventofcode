@@ -5,12 +5,12 @@ def read_file(file)
 end
 
 class Art
-  attr_reader :board, :new_board
+  attr_reader :board, :new_board, :rules
 
-  def initialize(x)
-    @board = []
+  def initialize(rules)
+    @board = [".#.","..#", "###"].map{|s| s.split("")}
     @new_board = []
-    @start_state = [".#.","..#", "###"]
+    set_rules(rules)
   end
 
   # def flip(piece)
@@ -49,6 +49,17 @@ class Art
     @board = new_board.deep_dup
   end
 
+  def enhance_block(block)
+
+  end
+
+  def rotate_array(arr)
+    new_arr = []
+    (0...arr[0].length).each do |i|
+      new_arr << (0...arr.length).map{|j| arr[arr.length - 1 - j][i]}
+    end
+    new_arr
+  end
   def get_block(block_size, pos)
     block = Array.new(block_size){Array.new}
     start_y, start_x = get_start_coord(block_size, board.size, pos)
@@ -80,6 +91,12 @@ class Art
 
   def num_on; board.flatten.count("#"); end
   def num_off; board.flatten.count("."); end
+
+  def set_rules(instructions)
+
+  end
+
+
 
 end
 
