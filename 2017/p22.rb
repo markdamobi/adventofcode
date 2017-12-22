@@ -5,7 +5,7 @@ def read_file(file)
 end
 
 class Infection
-  attr_reader :something, :infected, :cleaned, :orientation, :y, :x, :board
+  attr_reader :something, :infected, :cleaned, :orientation, :y, :x, :board, :flagged, :weakened
 
   def initialize(board)
     @board = board
@@ -13,6 +13,8 @@ class Infection
     @orientation = :up
     @infected = 0
     @cleaned = 0
+    @flagged = 0
+    @weakened = 0
   end
 
   def move
@@ -22,6 +24,22 @@ class Infection
     else
       turn_left
       infect_node
+    end
+    move_in_direction
+  end
+
+  def move2
+    if current_infected?
+      flag_node
+      turn_right
+    elsif current_clean?
+      weaken_node
+      turn_left
+    elsif current_weakened?
+      infect_node
+    elsif current_flagged?
+      clean_node
+      2.times{turn_right}
     end
     move_in_direction
   end
@@ -85,6 +103,16 @@ class Infection
     @cleaned += 1
   end
 
+  def flag_node
+    @board[y][x] = "F"
+    @flagged += 1
+  end
+
+  def weaken_node
+    @board[y][x] = "W"
+    @weakened += 1
+  end
+
   def infect_node
     @board[y][x] = "#"
     @infected += 1
@@ -93,12 +121,29 @@ class Infection
   def current_infected?
     board[y][x] == "#"
   end
+  def current_weakened?
+    board[y][x] == "W"
+  end
+  def current_flagged?
+    board[y][x] == "F"
+  end
+  def current_clean?
+    board[y][x] == "."
+  end
 
 end
 
 
-def run1
+def run
   # s = SomeStuff.new(read_file('2017/p22_test.txt'))
   virus = Infection.new(read_file('2017/p22_input.txt'))
-  byebug
+
+  #part 1
+  10000.times{virus.move}
+  p virus.infected
+
+  #part 2
+  virus2 = Infection.new(read_file('2017/p22_input.txt'))
+  10000000.times{virus.move2}
+  p virus2.infected
 end
