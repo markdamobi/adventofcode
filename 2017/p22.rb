@@ -144,6 +144,6 @@ def run
 
   #part 2
   virus2 = Infection.new(read_file('2017/p22_input.txt'))
-  10000000.times{virus.move2}
+  10000000.times{virus2.move2}
   p virus2.infected
 end
