@@ -1,7 +1,7 @@
 require 'active_support/all'
 require 'byebug'
 def read_file(file)
-  File.readlines(file).map{|l| l.strip }
+  File.readlines(file).map{|l| l.strip.split(" => ") }
 end
 
 class Art
@@ -10,7 +10,9 @@ class Art
   def initialize(rules)
     @board = [".#.","..#", "###"].map{|s| s.split("")}
     @new_board = []
-    set_rules(rules)
+    @rules = rules.to_h
+    # rules.each{|rule| @rules[rule[0]] = rule[1]}
+
   end
 
   # def flip(piece)
@@ -60,6 +62,29 @@ class Art
     end
     new_arr
   end
+
+  ## flips left to right.
+  def flip(arr)
+    arr.map{|part| part.reverse}
+  end
+
+  def stringify(arr)
+    arr.map{|ar| ar.join("")}.join("/")
+  end
+
+  def arrayify(str)
+    str.split("/").map{|l| l.split("")}
+  end
+
+  def orientations(arr)
+    r1 = rotate_array(arr)
+    r2 = rotate_array(r1)
+    r3 = rotate_array(r2)
+    f = flip(arr)
+    r2f = flip(r2)
+    [r1,r2,r3,f,r2f]
+  end
+
   def get_block(block_size, pos)
     block = Array.new(block_size){Array.new}
     start_y, start_x = get_start_coord(block_size, board.size, pos)
@@ -104,6 +129,8 @@ end
 def run1
   # s = SomeStuff.new(read_file('2017/p21_test.txt'))
   art = Art.new(read_file('2017/p21_input.txt'))
-  5.times{art.enhance}
-  art.num_on
+
+  byebug
+  # 5.times{art.enhance}
+  # art.num_on
 end
