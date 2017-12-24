@@ -43,13 +43,15 @@ class KnotHash
 end
 
 def run1
-  row = 0
-  # k = KnotHash.new("ljoxqyyw-#{row}".split("").map(&:ord))
-  k = KnotHash.new("flqrgnkx-#{row}".split("").map(&:ord))
-  k.knot_all
-  k.dense
-  p k.hexify
-  k.bitstr
+  num_used = 0
+  128.times do |r|
+    k = KnotHash.new("ljoxqyyw-#{r}".split("").map(&:ord) + [17, 31, 73, 47, 23])
+    # k = KnotHash.new("flqrgnkx-#{r}".split("").map(&:ord) + [17, 31, 73, 47, 23])
+    k.knot_all(64)
+    k.dense
+    num_used += k.bitstr.count("1")
+  end
+  num_used
 end
 
 def run2
