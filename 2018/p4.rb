@@ -52,6 +52,23 @@ def extract(input)
   arr
 end
 
+###TODO: Refactor. 
 def part2()
+  info = []
+  data = []
+  input = File.readlines("p4_input.txt").map{ |i| i.strip}
+  input.each do |ii|
+    data << extract(ii) 
+  end
 
+  data.sort_by!{|a,b| a}
+  sleep_record = process(data)
+  guards = Hash.new { |h, k| h[k] = [] }
+  sleep_record.values.each do |v|
+    guards[v[:guard]] += v[:sleep]
+  end
+
+  guards = guards.map{|k,v| [k, freq(v).find{ |a,b| b == freq(v).values.max }]}.to_h
+  max_guard = guards.find{|k,v| v[1] == guards.values.map{|v|v[1] }.max}
+  max_guard[1][0] * max_guard[0][1..-1].to_i
 end
