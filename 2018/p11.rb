@@ -36,18 +36,46 @@ def part1(s_num)
 	max
 end
 
-def part1(s_num, grid_size)
+# def part2(s_num, grid_size)
+# 	n = 3
+# 	max = [0,0,0]
+# 	max_v = -999999999
+# 	(1..grid_size).each do |size|
+# 		puts "square size: #{size}"
+# 		(1..grid_size-n+1).each do |x|
+# 			(1..grid_size-n+1).each do |y|
+# 				temp_max = get_n_power(x,y,size,s_num)
+# 				if temp_max > max_v
+# 					max = [x,y,size]
+# 					max_v = temp_max
+# 				end
+# 			end
+# 		end
+# 	end
+# 	p max
+# 	max
+# end
+
+
+def part2(s_num, grid_size)
 	n = 3
 	max = [0,0,0]
 	max_v = -999999999
-	(1..grid_size).each do |size|
-		puts "square size: #{size}"
-		(1..grid_size-n+1).each do |x|
-			(1..grid_size-n+1).each do |y|
-				temp_max = get_n_power(x,y,size,s_num)
-				if temp_max > max_v
-					max = [x,y,size]
-					max_v = temp_max
+	(1..grid_size-n+1).each do |x|
+		(1..grid_size-n+1).each do |y|
+			limit = [x,y].min
+			local_max = cell_power(x,y,s_num)
+			if local_max > max_v
+				max_v = local_max 
+				max = [x,y,1]
+			end
+			(2..limit).each do |sq|
+				(x...x+sq).each{|i| local_max += cell_power(i,sq+1,s_num)}
+				(y...y+sq).each{|j| local_max += cell_power(sq+1,j,s_num)}
+				local_max += cell_power(x+sq, y+sq, s_num)
+				if local_max > max_v
+					max = [x,y,sq]
+					max_v = local_max
 				end
 			end
 		end
