@@ -1,10 +1,12 @@
 require './helper'
 
 class Maze
-  def initialize()
-    @grid = File.readlines("p13_input.txt").map{ |i| i.chomp}
+  def initialize(filename="p13_input.txt")
+    # @grid = File.readlines("p13_input.txt").map{ |i| i.chomp}
     # @grid = File.readlines("p13_test.txt").map{ |i| i.chomp}
     # @grid = File.readlines("p13_test2.txt").map{ |i| i.chomp}
+    @grid = File.readlines(filename).map{ |i| i.chomp}
+
     @row_size = @grid.size 
     @col_size = @grid[0].size
     set_carts
