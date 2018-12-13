@@ -73,5 +73,5 @@ def get_max(x,y,grid_size,s_num)
 	[max_v, max_sq]
 end
 
-## runs in about 4 minis
-# Benchmark.bm{|bm| bm.report {part1(7347,300)}}
+## runs in about 4 mins
+# Benchmark.bm{|bm| bm.report {part2(7347,300)}}
