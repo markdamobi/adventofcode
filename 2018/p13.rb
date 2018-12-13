@@ -53,7 +53,7 @@ class Maze
       tick 
       remove_crash
       if carts.keys.size == 1
-        p carts.values
+        p carts.values[0][:pos].reverse
         break
       end
 
