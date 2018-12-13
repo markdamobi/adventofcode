@@ -4,6 +4,7 @@ class Maze
   def initialize()
     @grid = File.readlines("p13_input.txt").map{ |i| i.chomp}
     # @grid = File.readlines("p13_test.txt").map{ |i| i.chomp}
+    # @grid = File.readlines("p13_test2.txt").map{ |i| i.chomp}
     @row_size = @grid.size 
     @col_size = @grid[0].size
     set_carts
@@ -11,6 +12,20 @@ class Maze
   end 
 
   attr_reader :grid, :row_size, :col_size, :carts
+
+  def show
+    g = grid.deep_dup
+    carts.each do |id, dets|
+      x,y = dets[:pos]
+      if g[x][y].in? ["^", "v", "<", ">"] 
+        g[x][y] = "X"
+      else
+        g[x][y] = dets[:val]
+      end
+    end
+    # byebug
+    puts g.join("\n")
+  end 
 
   def tick
     carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
@@ -24,34 +39,31 @@ class Maze
       carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
         move_cart(id)
         if carts.select{|cid, cdets| cdets[:pos] == carts[id][:pos]}.size > 1
-          p carts[id][:pos]
+          p carts[id][:pos].reverse ## my cordinate is flipped. 
           return
         end
       end
     end
   end
 
-  # def find_crash
-  #   found_crash = false
-  #   crash = []
-  #   while !found_crash 
-  #     carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
-  #       move_cart(id)
-  #       crash = crash?
-  #       if crash
-  #         found_crash = true
-  #         break 
-  #       end
-  #     end
-  #     # crash = crash?
-  #     # if crash
-  #     #   p crash
-  #     #   break 
-  #     # end
-  #   end
-  #   p crash
-  # end
+  def movee2
+    loop do
+      tick 
+      remove_crash
+      if carts.keys.size == 1
+        p carts.values
+        break
+      end
 
+    end
+  end
+
+  def remove_crash
+    crashes = carts.keys.combination(2).select{|id1, id2| carts[id1][:pos] == carts[id2][:pos]}.flatten.uniq
+    crashes.each{|id| @carts.delete(id)}
+  end
+
+  #### NEEDS REFACTORING!
   def move_cart(id)
     x,y = carts[id][:pos]
     val = carts[id][:val]
@@ -104,8 +116,6 @@ class Maze
         @carts[id][:val] = "v"
       end
     end
-
-
   end
 
 
@@ -154,7 +164,7 @@ class Maze
   end 
 
   def crash?
-    carts.keys.each_cons(2) do |id1,id2|
+    carts.keys.combination(2) do |id1,id2|
       return carts[id1][:pos] if carts[id1][:pos] == carts[id2][:pos]
     end
     nil
