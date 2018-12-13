@@ -8,28 +8,49 @@ class Maze
     @col_size = @grid[0].size
     set_carts
     fix_grid
-    # find_crash
   end 
 
   attr_reader :grid, :row_size, :col_size, :carts
 
   def tick
-    carts.sort_by{|id, dets| dets[:pos][0] }.each do |id,dets|
+    carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
       move_cart(id)
     end
     carts
   end
 
-  def find_crash
+  def movee
     while true 
-      tick
-      crash = crash?
-      if crash
-        p crash
-        break 
+      carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
+        move_cart(id)
+        if carts.select{|cid, cdets| cdets[:pos] == carts[id][:pos]}.size > 1
+          p carts[id][:pos]
+          return
+        end
       end
     end
   end
+
+  # def find_crash
+  #   found_crash = false
+  #   crash = []
+  #   while !found_crash 
+  #     carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
+  #       move_cart(id)
+  #       crash = crash?
+  #       if crash
+  #         found_crash = true
+  #         break 
+  #       end
+  #     end
+  #     # crash = crash?
+  #     # if crash
+  #     #   p crash
+  #     #   break 
+  #     # end
+  #   end
+  #   p crash
+  # end
 
   def move_cart(id)
     x,y = carts[id][:pos]
@@ -105,23 +126,19 @@ class Maze
   end
 
   def init_intersection
-    [:left, :straight, :right].cycle
+    ["left", "straight", "right"].cycle
   end
 
   def get_inter_val(direction, curr_val)
     vals = ["^", ">", "v", "<"]
     i = vals.index curr_val
-    if direction == :left
+    if direction == "left"
       return vals[(i-1)%4]
-    elsif direction == :straight
-      curr_val
-    elsif direction == :right 
+    elsif direction == "straight"
+      return curr_val
+    elsif direction == "right" 
       return vals[(i+1)%4]
     end 
-
-
-    # vals = ["^", "<", "v", ">"]
-    # i = vals.index v
   end
 
   def fix_grid
@@ -143,14 +160,5 @@ class Maze
     nil
   end
 
-  def part1()
-
-    input.each do |line|
-
-    end
-
-
-    
-  end
 
 end
