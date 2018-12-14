@@ -48,6 +48,7 @@ class Maze
     end
   end
 
+  ### this works for the test case. 
   def movee2
     loop do
       tick 
@@ -57,6 +58,23 @@ class Maze
         break
       end
 
+    end
+  end
+
+  ## this solves part 2. there's a subtle difference between what the test case is reporting and what
+  ## is being asked in part 2. so the same code doesn't work. 
+  def movee2_for_real
+    loop do
+      curr_carts = carts.dup
+      curr_carts.sort_by{|id, dets| dets[:pos] }.each do |id,dets|
+        next unless carts[id].present?
+        move_cart(id)
+        remove_crash
+        if carts.keys.size == 1
+          p carts.values[0][:pos].reverse
+          return
+        end
+      end
     end
   end
 
