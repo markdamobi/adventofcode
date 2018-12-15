@@ -4,9 +4,10 @@ class Plant
   def initialize(filename="p12_input.txt", round=20)
     @filename = filename
     read_file(round)
+    @seen = {}
   end
 
-  attr_reader :filename, :rules ,:pots, :prev_pots
+  attr_reader :filename, :rules ,:pots, :prev_pots, :seen
 
   def read_file(round)
     lines = File.readlines(filename).map{ |i| i.chomp}
@@ -52,5 +53,27 @@ class Plant
     20.times{tick}
     sumit
   end
+
+  # def period?
+  #   # init_state = pots.dup.values
+  #   cnt = 0
+  #   loop do 
+  #     tick 
+  #     cnt +=1
+
+  #     su = pots.select{|k,v| v == '#'}.keys.join("-")
+  #     if seen.values.include? su 
+  #       puts [seen.invert[su], cnt] 
+  #       break
+  #     end
+      
+  #     @seen[cnt] = su
+  #   end
+  #   cnt
+  # end
+
+  # def part2
+
+  # end
 
 end
