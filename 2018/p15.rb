@@ -1,8 +1,11 @@
 require './helper'
 require './graph_helper'
 require './graph_helper2'
+require './graph_helper3'
+require './graph_helper4'
 
 ## graph_helper2 is an attempt to improve performance of shortest path search. didn't work. 
+## graph_helper3 improves 2 by not computing shortests paths once all open sqs have been accounted for.
 
 class Combat
   def initialize(filename="p15_input.txt")
@@ -44,7 +47,10 @@ class Combat
         break 
       end
     end
-    @num_rounds * units.select(&:alive?).map(&:hits).reduce(:+) 
+
+    v = @num_rounds * units.select(&:alive?).map(&:hits).reduce(:+) 
+    puts v 
+    v
   end
 
   def tick
@@ -102,9 +108,13 @@ class Combat
     source = unit.pos 
     edges = get_edges(vertices)
 
-    g = Graph.new(unit.pos, vertices, edges)
-    # g = Graph2.new(unit.pos, vertices, edges)
-
+    # g = Graph.new(unit.pos, vertices, edges)
+    # g2 = Graph2.new(unit.pos, vertices, edges)
+    # g = Graph3.new(unit.pos, vertices, edges, sqs_in_range)
+    # puts "before graph"
+    g = Graph4.new(unit.pos, vertices, edges, sqs_in_range)
+    # puts "after graph"
+    # byebug
     reachable = sqs_in_range.select{ |x,y| [x,y].in?(g.ss) }
 
     return nil unless reachable.present?
@@ -123,8 +133,10 @@ class Combat
 
     neighbors = unit.neighbors.select{|n| grid[n[0]][n[1]] == "."}
 
+    neighbors.map{|n| [n, Graph4.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
+    # neighbors.map{|n| [n, Graph3.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
     # neighbors.map{|n| [n, Graph2.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    neighbors.map{|n| [n, Graph.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
+    # neighbors.map{|n| [n, Graph.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
   end
 
 
