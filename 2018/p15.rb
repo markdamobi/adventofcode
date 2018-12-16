@@ -2,6 +2,8 @@ require './helper'
 require './graph_helper'
 require './graph_helper2'
 
+## graph_helper2 is an attempt to improve performance of shortest path search. didn't work. 
+
 class Combat
   def initialize(filename="p15_input.txt")
     @filename = filename
