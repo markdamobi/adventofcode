@@ -103,39 +103,22 @@ class Combat
 
   end
 
+  ### this method is choking up my code. need to make this better. 
   def get_location_to_move(unit, sqs_in_range)
     vertices = get_vertices(unit) ## should send in only open vertices. 
     source = unit.pos 
     edges = get_edges(vertices)
-
-    # g = Graph.new(unit.pos, vertices, edges)
-    # g2 = Graph2.new(unit.pos, vertices, edges)
-    # g = Graph3.new(unit.pos, vertices, edges, sqs_in_range)
-    # puts "before graph"
     g = Graph4.new(unit.pos, vertices, edges, sqs_in_range)
-    # puts "after graph"
-    # byebug
     reachable = sqs_in_range.select{ |x,y| [x,y].in?(g.ss) }
-
     return nil unless reachable.present?
-
     dists = g.d.select{|vertex, dist| vertex.in?(reachable)}
-
     min_dist = dists.map{|sq, d| d}.min
     allowed_max = xlim * ylim
-
     return if min_dist > allowed_max
-
     min_sqs = dists.select{|sq, d| d == min_dist}.sort_by{|sq, d| sq}
-
-
     min_sq = min_sqs.first[0] 
-
     neighbors = unit.neighbors.select{|n| grid[n[0]][n[1]] == "."}
     neighbors.map{|n| [n, Graph4.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    # neighbors.map{|n| [n, Graph3.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    # neighbors.map{|n| [n, Graph2.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    # neighbors.map{|n| [n, Graph.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
   end
 
 
@@ -263,6 +246,3 @@ class Unit
   end
 
 end
-
-#### NOTE: Current approach is extremely inefficient. won't work for part 2. 
-#### need better strategy instead of naive implementation of dijkstra's algorithm. 

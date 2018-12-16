@@ -1,11 +1,9 @@
 require './helper'
-# require './graph_helper'
-# require './graph_helper2'
-# require './graph_helper3'
 require './graph_helper4'
 
-## graph_helper2 is an attempt to improve performance of shortest path search. didn't work. 
+## graph_helper2 is an attempt to improve performance of graph_helper shortest path search. didn't make much difference. 
 ## graph_helper3 improves 2 by not computing shortests paths once all open sqs have been accounted for.
+## graph_helper4 improves 3 by stopping computation once we see a path length longer than minimum for a reachable square. (reduces runtime of part 1 from about 2.5 hrs to 10 mins. computes part 2 in 90 mins. Not the most efficient, but okay for now.)
 
 class Combat2
   def initialize(filename="p15_input.txt")
@@ -54,8 +52,6 @@ class Combat2
     end
     outcome
   end
-
-
 
   def process 
     @num_rounds = 0
@@ -132,14 +128,7 @@ class Combat2
     vertices = get_vertices(unit) ## should send in only open vertices. 
     source = unit.pos 
     edges = get_edges(vertices)
-
-    # g = Graph.new(unit.pos, vertices, edges)
-    # g2 = Graph2.new(unit.pos, vertices, edges)
-    # g = Graph3.new(unit.pos, vertices, edges, sqs_in_range)
-    # puts "before graph"
     g = Graph4.new(unit.pos, vertices, edges, sqs_in_range)
-    # puts "after graph"
-    # byebug
     reachable = sqs_in_range.select{ |x,y| [x,y].in?(g.ss) }
 
     return nil unless reachable.present?
@@ -157,13 +146,8 @@ class Combat2
     min_sq = min_sqs.first[0] 
 
     neighbors = unit.neighbors.select{|n| grid[n[0]][n[1]] == "."}
-    # byebug
     neighbors.map{|n| [n, Graph4.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    # neighbors.map{|n| [n, Graph3.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    # neighbors.map{|n| [n, Graph2.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
-    # neighbors.map{|n| [n, Graph.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
   end
-
 
   ## open slots. 
   def open_squares
@@ -226,19 +210,14 @@ class Combat2
   end
 
   def opensqs_in_range_of_targets(unit)
-    #adjacent to target 
-    #not a wall. 
     sqs = targets(unit).map(&:neighbors).flatten(1).uniq.select{|x,y| grid[x][y] == "."}
     sqs
   end
 
   def in_range_of_target?(unit)
-    #check if unit is in range of any target
     targets_in_range(unit).any?
   end
 end
-
-
 
 
 class Unit
@@ -300,5 +279,5 @@ class Unit
 
 end
 
-#### NOTE: Current approach is extremely inefficient. won't work for part 2. 
-#### need better strategy instead of naive implementation of dijkstra's algorithm. 
+## takes about 90 mins to spit out ans. not efficient. need to improve process for finding location to move to. 
+## my dijkstra-like implementation is not so efficient. 
