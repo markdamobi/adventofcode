@@ -1,4 +1,4 @@
-# require_relative "./../../2018/helper"
+
 require_relative './../p15'
 
 describe "P15 part 1" do 

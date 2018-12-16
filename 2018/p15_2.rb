@@ -52,6 +52,7 @@ class Combat2
       end
       e_attack += 1
     end
+    outcome
   end
 
 
