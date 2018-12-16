@@ -49,7 +49,7 @@ class Combat
     end
 
     v = @num_rounds * units.select(&:alive?).map(&:hits).reduce(:+) 
-    puts v 
+    # puts v 
     v
   end
 
@@ -132,7 +132,6 @@ class Combat
     min_sq = min_sqs.first[0] 
 
     neighbors = unit.neighbors.select{|n| grid[n[0]][n[1]] == "."}
-    byebug
     neighbors.map{|n| [n, Graph4.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
     # neighbors.map{|n| [n, Graph3.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
     # neighbors.map{|n| [n, Graph2.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
