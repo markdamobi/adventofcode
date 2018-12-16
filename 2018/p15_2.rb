@@ -1,20 +1,20 @@
 require './helper'
-require './graph_helper'
-require './graph_helper2'
-require './graph_helper3'
+# require './graph_helper'
+# require './graph_helper2'
+# require './graph_helper3'
 require './graph_helper4'
 
 ## graph_helper2 is an attempt to improve performance of shortest path search. didn't work. 
 ## graph_helper3 improves 2 by not computing shortests paths once all open sqs have been accounted for.
 
-class Combat
+class Combat2
   def initialize(filename="p15_input.txt")
     @filename = filename
     read_file
     @num_rounds = 0
   end
 
-  attr_reader :filename, :grid, :units, :xlim, :ylim
+  attr_reader :filename, :grid, :units, :xlim, :ylim, :elves
 
   def read_file
     lines = File.readlines(filename).map{ |i| i.chomp}
@@ -35,31 +35,52 @@ class Combat
     end
     @xlim = @grid.size 
     @ylim = @grid.first.size 
+
+    @elves = units.select{|u| u.elf?}
   end
+
+  def elves_win 
+    e_attack = 4
+    while true 
+      read_file
+      elves.each {|el| el.set_power(e_attack)}
+      outcome = process 
+      if outcome != -1
+        puts e_attack
+        puts outcome
+        break
+      end
+      e_attack += 1
+    end
+  end
+
+
 
   def process 
     @num_rounds = 0
 
     loop do  
-      if tick 
+      val = tick 
+      if val == true 
         @num_rounds += 1
-      else 
-        break 
+      elsif val == false
+        break
+      elsif val == "E"
+        return -1
       end
     end
 
     v = @num_rounds * units.select(&:alive?).map(&:hits).reduce(:+) 
-    puts v 
-    v
   end
 
   def tick
     units.select{|u| u.alive?}.sort_by{|u| u.pos}.each do |u|
+      killed = nil
       next unless u.alive?
       targets = targets(u)
       return false unless targets.present?
       if in_range_of_target?(u)
-        attack(u)
+        killed = attack(u)
       else
         op_sqs_near_tg = opensqs_in_range_of_targets(u)
         if op_sqs_near_tg.present?
@@ -67,10 +88,13 @@ class Combat
           move(u, sq)
 
           if in_range_of_target?(u)
-            attack(u)
+            killed = attack(u)
           end
 
         end
+      end
+      if killed == "E"
+        return "E"
       end
     end
 
@@ -132,7 +156,7 @@ class Combat
     min_sq = min_sqs.first[0] 
 
     neighbors = unit.neighbors.select{|n| grid[n[0]][n[1]] == "."}
-    byebug
+    # byebug
     neighbors.map{|n| [n, Graph4.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
     # neighbors.map{|n| [n, Graph3.new(n, vertices, edges.reject{|e| e.include?(source)}, reachable ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
     # neighbors.map{|n| [n, Graph2.new(n, vertices, edges.reject{|e| e.include?(source)} ).d[min_sq] + 1] }.select{|n,d| d == min_dist}.sort_by{|n,d| n}.first[0]
@@ -181,6 +205,7 @@ class Combat
 
     if tg_to_attack.dead?
       remove(tg_to_attack)
+      return "#{tg_to_attack.val}" if tg_to_attack.elf?
     end
 
   end
@@ -231,6 +256,11 @@ class Unit
     hits <= 0
   end
 
+  def elf?
+    val == "E"
+  end
+
+
   def alive?
     !dead?
   end
@@ -253,6 +283,10 @@ class Unit
 
   def set_hit(new_hit)
     @hits = new_hit
+  end
+
+  def set_power(new_power)
+    @power = new_power
   end
 
   def neighbor?(other_cell)
