@@ -32,6 +32,7 @@ class Lumber
 				process(row,col, prev_grid)
 			end
 		end
+		state
 	end
 
 	def tickn(n)
@@ -94,7 +95,7 @@ class Lumber
 					tree += 1      if tree?(row,col, grid)
 					lumberyard +=1 if lumberyard?(row,col, grid)
 				rescue StandardError => e
-					byebug
+					# byebug
 				end
 			end
 		end
@@ -107,5 +108,24 @@ class Lumber
 		puts resources 
 		resources
 	end
+
+	def get_period
+		seen = {}
+		count = 0 
+		init_state = state.deep_dup
+		loop do 
+			tick 
+			count += 1
+			x = state
+			if seen.key? x
+				puts "#{seen[x]} -> #{count}"
+				break
+			end
+			seen[state] = count 
+		end
+	end
+
+	#### using the get_period method, it turns out that 551 -> 579. this means that the process starts to cycle. 
+	#### and it has a period of 579 - 551 = 28. so (1000,000,000 - 551)%28 = 1. this means that we only need 552 iterations for 1 bil. 
 
 end
