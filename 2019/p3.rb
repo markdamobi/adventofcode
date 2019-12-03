@@ -47,7 +47,7 @@ class Wire
     points & other_wire.points
   end
 
-  def min_intersections(other_wire)
+  def min_intersection_distance(other_wire)
     intersections(other_wire).map{|x,y| x.abs + y.abs}.sort[1]
   end
 
