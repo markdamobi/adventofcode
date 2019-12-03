@@ -1,6 +1,8 @@
 def run1
   data = File.readlines('p3.txt')
-
+  w1 = Wire.new(data[0].chomp).tap{ |w| w.generate_points }
+  w2 = Wire.new(data[1].chomp).tap{ |w| w.generate_points }
+  w1.min_intersection_distance(w2)
 end
 
 class Wire
@@ -48,7 +50,6 @@ class Wire
   end
 
   def min_intersection_distance(other_wire)
-    intersections(other_wire).map{|x,y| x.abs + y.abs}.sort[1]
+    intersections(other_wire).map{ |x,y| x.abs + y.abs }.sort[1]
   end
-
 end
