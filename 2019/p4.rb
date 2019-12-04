@@ -18,36 +18,5 @@ def adjacent_same?(n)
 end
 
 def adjacent_same2?(n)
-   n = n.to_s
-  found = nil
-
-  (1..n.size-2).each do |i|
-    if((n[i] == n[i-1]))
-      if(n[i] != n[i+1])
-        return true
-      else
-        found = false
-      end
-    end
-  end
-  found
+  n.to_s.chars.chunk{|s| s}.any?{|a, b| b.size == 2 }
 end
-
-def adjacent_same2?(n)
-  n = n.to_s
-  cnt = 1
-  curr = n[0]
-  n.chars[1..-1].each do |i|
-    if(i != curr)
-      return true if cnt == 2
-      curr = i
-      cnt = 1
-    else
-      cnt += 1
-    end
-  end
-  return true if cnt == 2
-  nil
-end
-
-##bad code... so bad...
