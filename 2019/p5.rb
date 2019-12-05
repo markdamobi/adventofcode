@@ -1,3 +1,4 @@
+require 'byebug'
 def run1
   data = File.readlines('p5.txt')
 
@@ -20,7 +21,9 @@ class Opcode
     @pointer = pointer
     @orig_input = orig_input
 
+    # byebug if pointer == 140
     set_output_address
+    # byebug if pointer == 140
     resolve_parameter
   end
 
@@ -49,9 +52,9 @@ class Opcode
 
   def set_output_address
     if code == 1
-      @output_address = pointer + 4
+      @output_address = pointer + 3
     elsif code == 2
-      @output_address = pointer + 4
+      @output_address = pointer + 3
     elsif code == 3
       @output_address = input1
     end
@@ -59,13 +62,13 @@ class Opcode
 
   def add
     # puts "add -> #{input1} #{input2}"
-    list[output_address] = input1 + input2
+    list[list[output_address]] = input1 + input2
     @pointer += 4
   end
 
   def multiply
     # puts "multiply -> #{input1} #{input2}"
-    list[output_address] = input1 * input2
+    list[list[output_address]] = input1 * input2
     @pointer += 4
   end
 
@@ -75,7 +78,7 @@ class Opcode
   end
 
   def four
-    puts input1
+    puts list[input1]
     @pointer += 2
   end
 end
@@ -90,31 +93,36 @@ class Program
   attr_reader :list, :pointer, :orig_input
 
   def compute
+    x = nil
     while(get_code != 99)
-      inst = list[pointer]
-      imp = ("%4d"%inst).chars.map(&:to_i)
-      code = imp[-1]
-      p1 = imp[-3]
-      p2 = imp[-4]
-      input1 = list[pointer + 1]
-      input2 = nil
-      input2 = list[pointer + 2] if [1,2].include?(code)
-
-      opcode = Opcode.new(pointer: pointer,
-                          code: code,
-                          input1: input1,
-                          input2: input2,
-                          p1: p1,
-                          p2: p2,
-                          list: list,
-                          orig_input: orig_input)
-      # p opcode
-      opcode.perform
-      # p opcode
-      @pointer = opcode.pointer
+      x = tick
     end
+    x
+  end
 
+  def tick
+    inst = list[pointer]
+    imp = ("%4d"%inst).chars.map(&:to_i)
+    code = imp[-1]
+    p1 = imp[-3]
+    p2 = imp[-4]
+    input1 = list[pointer + 1]
+    input2 = nil
+    input2 = list[pointer + 2] if [1,2].include?(code)
 
+    opcode = Opcode.new(pointer: pointer,
+                        code: code,
+                        input1: input1,
+                        input2: input2,
+                        p1: p1,
+                        p2: p2,
+                        list: list,
+                        orig_input: orig_input)
+    # byebug if pointer == 140
+    opcode.perform
+    # p opcode
+    @pointer = opcode.pointer
+    opcode
   end
 
   def get_code
