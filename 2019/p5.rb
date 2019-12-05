@@ -31,7 +31,7 @@ class Opcode
 
   ## just for 1 and 2.
   def resolve_parameter
-    if [1,2,3].include?(code)
+    if [1,2,3,5,6,7,8].include?(code)
       @input1 = list[input1] if p1 == 0
       @input2 = list[input2] if ((input2 != nil) && (p2 == 0))
     end
@@ -47,13 +47,19 @@ class Opcode
       three
     when 4
       four
+    when 5
+      jump_if_true
+    when 6
+      jump_if_false
+    when 7
+      less_than
+    when 8
+      equals
     end
   end
 
   def set_output_address
-    if code == 1
-      @output_address = pointer + 3
-    elsif code == 2
+    if [1, 2, 7, 8].include? code
       @output_address = pointer + 3
     elsif code == 3
       @output_address = input1
@@ -61,13 +67,11 @@ class Opcode
   end
 
   def add
-    # puts "add -> #{input1} #{input2}"
     list[list[output_address]] = input1 + input2
     @pointer += 4
   end
 
   def multiply
-    # puts "multiply -> #{input1} #{input2}"
     list[list[output_address]] = input1 * input2
     @pointer += 4
   end
@@ -81,7 +85,47 @@ class Opcode
     puts list[input1]
     @pointer += 2
   end
+
+#   Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+# Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+# Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+# Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+
+  def jump_if_true
+    if input1 != 0
+      @pointer = input2
+    else
+      @pointer += 3
+    end
+  end
+
+  def jump_if_false
+    if input1 == 0
+      @pointer = input2
+    else
+      @pointer += 3
+    end
+  end
+
+  def less_than
+    if input1 < input2
+      list[list[output_address]] = 1
+    else
+      list[list[output_address]] = 0
+    end
+    @pointer += 4
+  end
+
+  def equals
+    if input1 == input2
+      list[list[output_address]] = 1
+    else
+      list[list[output_address]] = 0
+    end
+    @pointer += 4
+  end
 end
+
 
 class Program
   def initialize(list:, orig_input: 1)
@@ -108,7 +152,7 @@ class Program
     p2 = imp[-4]
     input1 = list[pointer + 1]
     input2 = nil
-    input2 = list[pointer + 2] if [1,2].include?(code)
+    input2 = list[pointer + 2] if [1,2,5,6,7,8].include?(code)
 
     opcode = Opcode.new(pointer: pointer,
                         code: code,
@@ -118,9 +162,8 @@ class Program
                         p2: p2,
                         list: list,
                         orig_input: orig_input)
-    # byebug if pointer == 140
-    opcode.perform
     # p opcode
+    opcode.perform
     @pointer = opcode.pointer
     opcode
   end
