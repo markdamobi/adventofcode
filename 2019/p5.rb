@@ -1,13 +1,4 @@
 require 'byebug'
-def run1
-  data = File.readlines('p5.txt')
-
-end
-
-def d1(n)
-
-end
-
 
 class Opcode
   def initialize(pointer: 0, code: , input1: , input2: nil, p1: 0, p2: 0, p3: 0, list:, orig_input: nil)
@@ -21,17 +12,14 @@ class Opcode
     @pointer = pointer
     @orig_input = orig_input
 
-    # byebug if pointer == 140
     set_output_address
-    # byebug if pointer == 140
     resolve_parameter
   end
 
   attr_reader :code, :input1, :input2, :p1, :p2, :p3, :list, :pointer, :output_address, :orig_input
 
-  ## just for 1 and 2.
   def resolve_parameter
-    if [1,2,3,5,6,7,8].include?(code)
+    if [1,2,3,4,5,6,7,8].include?(code)
       @input1 = list[input1] if p1 == 0
       @input2 = list[input2] if ((input2 != nil) && (p2 == 0))
     end
@@ -82,14 +70,9 @@ class Opcode
   end
 
   def four
-    puts list[input1]
+    puts input1
     @pointer += 2
   end
-
-#   Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-# Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-# Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-# Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
 
   def jump_if_true
     if input1 != 0
@@ -162,10 +145,9 @@ class Program
                         p2: p2,
                         list: list,
                         orig_input: orig_input)
-    # p opcode
     opcode.perform
     @pointer = opcode.pointer
-    opcode
+    nil
   end
 
   def get_code
