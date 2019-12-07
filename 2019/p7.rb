@@ -46,15 +46,12 @@ end
 def amplifiers2(list)
   max_t = -99999999
 
-  # [5,6,7,8,9].permutation(5).each do |a,b,c,d,e|
-  [[9,8,7,6,5]].each do |a,b,c,d,e|
-    # input = 0
+  [5,6,7,8,9].permutation(5).each do |a,b,c,d,e|
     l1 = list.dup
     l2 = list.dup
     l3 = list.dup
     l4 = list.dup
     l5 = list.dup
-
 
     ## first round.
     prog1 = Program.new(list: l1, orig_input: [a, 0])
@@ -161,7 +158,6 @@ class Opcode
   end
 
   def four
-    # puts input1
     @pointer += 2
     input1
   end
@@ -220,8 +216,8 @@ class Program
     new_code = get_code
     while(new_code != 99)
       x = tick
-      new_code = get_code
       break if new_code == 4
+      new_code = get_code
     end
     x
   end
@@ -244,7 +240,6 @@ class Program
                         p2: p2,
                         list: list,
                         orig_input: orig_input)
-    p opcode
     ret_val = opcode.perform
     @pointer = opcode.pointer
     ret_val
@@ -255,5 +250,4 @@ class Program
     imp = ("%4d"%inst).chars.map(&:to_i)
     code = imp[-2..-1].join.to_i
   end
-
 end
