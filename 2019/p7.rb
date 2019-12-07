@@ -4,6 +4,11 @@ def run1(file: 'p7.txt')
   amplifiers(list)
 end
 
+def run2(file: 'p7.txt')
+  list = File.read(file).split(",").map{ |l| l.chomp.strip.to_i }
+  amplifiers2(list)
+end
+
 def amplifiers(list)
   max_t = -99999999
 
@@ -31,6 +36,55 @@ def amplifiers(list)
 
     if(output > max_t)
       max_t = output
+    end
+
+  end
+  max_t
+end
+
+
+def amplifiers2(list)
+  max_t = -99999999
+
+  # [5,6,7,8,9].permutation(5).each do |a,b,c,d,e|
+  [[9,8,7,6,5]].each do |a,b,c,d,e|
+    # input = 0
+    l1 = list.dup
+    l2 = list.dup
+    l3 = list.dup
+    l4 = list.dup
+    l5 = list.dup
+
+
+    ## first round.
+    prog1 = Program.new(list: l1, orig_input: [a, 0])
+    input = prog1.compute
+
+    prog2 = Program.new(list: l2, orig_input: [b, input])
+    input = prog2.compute
+
+    prog3 = Program.new(list: l3, orig_input: [c, input])
+    input = prog3.compute
+
+    prog4 = Program.new(list: l4, orig_input: [d, input])
+    input = prog4.compute
+
+    prog5 = Program.new(list: l5, orig_input: [e, input])
+    input = prog5.compute
+
+
+
+    while(true)
+      input = prog1.compute(input: [input])
+      input = prog2.compute(input: [input])
+      input = prog3.compute(input: [input])
+      input = prog4.compute(input: [input])
+      input = prog5.compute(input: [input])
+
+      break if input == nil
+      if(input > max_t)
+        max_t = input
+      end
     end
 
   end
@@ -149,18 +203,25 @@ end
 
 
 class Program
-  def initialize(list:, orig_input: 1)
+  def initialize(list:, orig_input: [], pointer: 0)
     @list = list
-    @pointer = 0
+    @pointer = pointer
     @orig_input = orig_input
   end
 
   attr_reader :list, :pointer, :orig_input
 
-  def compute
+  def compute(input: nil)
+    if input != nil
+      @orig_input += input
+    end
+
     x = nil
-    while(get_code != 99)
+    new_code = get_code
+    while(new_code != 99)
       x = tick
+      new_code = get_code
+      break if new_code == 4
     end
     x
   end
@@ -183,6 +244,7 @@ class Program
                         p2: p2,
                         list: list,
                         orig_input: orig_input)
+    p opcode
     ret_val = opcode.perform
     @pointer = opcode.pointer
     ret_val
