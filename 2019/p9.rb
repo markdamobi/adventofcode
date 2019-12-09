@@ -84,7 +84,9 @@ class Opcode
       @output_address = list[pointer + 3]
       @output_address += relative_base if (p3 == 2)
     elsif code == 3
-      @output_address = input1
+      @output_address = list[pointer + 1]
+      @output_address += relative_base if (p1 == 2)
+      # @output_address = input1
     end
 
   end
@@ -183,7 +185,7 @@ class Program
     p1 = imp[-3]
     p2 = imp[-4]
     p3 = imp[-5]
-    byebug if p3 != 0
+    # byebug if p3 != 0
     input1 = list[pointer + 1]
     input2 = nil
     input2 = list[pointer + 2] if [1,2,5,6,7,8].include?(code)
@@ -199,7 +201,9 @@ class Program
                         orig_input: orig_input,
                         relative_base: relative_base)
     # p opcode
+    # byebug if code == 3
     ret_val = opcode.perform
+    # byebug if code == 3
     # p opcode
     @pointer = opcode.pointer
     @relative_base = opcode.relative_base
