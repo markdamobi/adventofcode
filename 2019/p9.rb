@@ -6,11 +6,12 @@ def run1(file: 'p9.txt', relative_base: 0)
   program = Program.new(list: list, orig_input: [1], relative_base: relative_base)
 end
 
-
-
-def d(list)
-
+def run2(file: 'p9.txt', relative_base: 0)
+  list = File.read(file).split(",").map{ |l| l.chomp.strip.to_i }
+  list += Array.new(10000, 0)
+  program = Program.new(list: list, orig_input: [2], relative_base: relative_base)
 end
+
 
 class Opcode
   def initialize(pointer: 0, code: , input1: , input2: nil, p1: 0, p2: 0, p3: 0, list:, orig_input: nil, relative_base: 0)
@@ -33,26 +34,17 @@ class Opcode
 
   def resolve_parameter
     if [1,2,3,4,5,6,7,8,9].include?(code)
-      # @input1 = list[input1] if p1 == 0
-      # @input2 = list[input2] if ((input2 != nil) && (p2 == 0))
-
       if p1 == 0
         @input1 = list[input1]
       elsif p1 == 2
         @input1 = list[input1 + relative_base]
       end
 
-
       if p2 == 0
         @input2 = list[input2] if (input2 != nil)
       elsif p2 == 2
         @input2 = (list[input2 + relative_base]) if (input2 != nil)
       end
-
-
-
-      # @input1 = list[input1 + relative_base] if p1 == 2
-      # @input2 = list[input2 + relative_base] if ((input2 != nil) && (p2 == 2))
     end
   end
 
@@ -86,7 +78,6 @@ class Opcode
     elsif code == 3
       @output_address = list[pointer + 1]
       @output_address += relative_base if (p1 == 2)
-      # @output_address = input1
     end
 
   end
@@ -185,7 +176,6 @@ class Program
     p1 = imp[-3]
     p2 = imp[-4]
     p3 = imp[-5]
-    # byebug if p3 != 0
     input1 = list[pointer + 1]
     input2 = nil
     input2 = list[pointer + 2] if [1,2,5,6,7,8].include?(code)
@@ -200,11 +190,7 @@ class Program
                         list: list,
                         orig_input: orig_input,
                         relative_base: relative_base)
-    # p opcode
-    # byebug if code == 3
     ret_val = opcode.perform
-    # byebug if code == 3
-    # p opcode
     @pointer = opcode.pointer
     @relative_base = opcode.relative_base
     ret_val
