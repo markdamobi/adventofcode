@@ -38,17 +38,13 @@ class Monitor
   end
 
   def num_slopes(x,y)
-    # slopers = []
     slopes = []
     (asteroids - [[x,y]]).each do |x2, y2|
       p1 = Point.new(x:x, y:y)
       p2 = Point.new(x:x2, y:y2)
       slope = p1.slope(p2)
       slopes << slope
-      # slopers << [[x2, y2], slope]
-      # puts "(#{x2}, #{y2}) -> #{slope}"
     end
-    # slopers.group_by{|a,b| b}.each{|k,v| puts "#{k} -> #{v.map{|x| x[0]}}"}
 
     slopes.uniq.size
   end
@@ -74,8 +70,6 @@ class Point
   attr_reader :x, :y
 
   def slope(p2)
-    # byebug if p2.x == x
-
     if x == p2.x
       return 10000 if(p2.y > y)
       return -10000 if(p2.y < y)
