@@ -3,10 +3,9 @@ require 'byebug'
 def run1(file: 'p10.txt', death_time: 200, x:26, y:29)
   list = File.readlines(file).map{ |l| l.chomp.strip.split("") }
   vaporizer = Vaporizer.new(grid: list, x: x, y: y)
-  # vaporizer.vaporize
-  # ast = vaporizer.asteroids.select{ |k,v| v.time_of_death == death_time }.values.first
-  # p ast
-  # ast.x * 100 + ast.y
+  vaporizer.vaporize
+  ast = vaporizer.asteroids.values.find{ |as| as.time_of_death == death_time }
+  ast.x * 100 + ast.y
 end
 
 class Vaporizer
@@ -17,7 +16,7 @@ class Vaporizer
     @grid = grid
     @rows = grid.size
     @cols = grid[0].size
-    @vaporized = []
+    @vaporized = [nil]
     @los = 0 #line of sight
     set_asteroids
     set_angles
@@ -29,7 +28,6 @@ class Vaporizer
 
   def set_angles
     @asteroids.each do |k, as|
-      # p2 = Point.new(x: k[0], y: k[1])
       @asteroids[k].set_angle(p1)
     end
   end
@@ -69,7 +67,6 @@ class Vaporizer
   def set_angles_group
     by_angle = asteroids.values.group_by{ |as| as.angle }
     @group_by_angle = by_angle.map do |ang, asts|
-      # byebug if ang == 0
       [ang, asts.sort_by{ |as| p1.distance(as) } ]
     end
     @group_by_angle.sort_by!{|g| g[0]}
@@ -143,6 +140,6 @@ class Vector
 
   def get_angle(v2)
     dp = dotp(v2)
-    Math.acos(Float(dp) / (mag * v2.mag))
+    Math.acos(Float(dp) / (mag * v2.mag)).round(10)
   end
 end
