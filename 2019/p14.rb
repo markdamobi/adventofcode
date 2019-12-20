@@ -1,20 +1,29 @@
 require_relative './graph'
 
-def run1(file: "p14.txt")
-  reactor = Reactor.new(file: file)
+def run1(file: "p14.txt", num_fuels: 1)
+  reactor = Reactor.new(file: file, num_fuels: num_fuels)
   reactor.set_levels
   reactor.get_num_ores
 end
 
+# for part 2, Just do a sort of binary search until you get something like this.
+# I just played around with this manually in console. Probably should write some code to do the manual search for me
+#   by giving it some upper bound and lower bound.
+# >> run2(num_fuels: 6226152)
+# => 999999986236
+# >> run2(num_fuels: 6226153)
+# => 1000000152093
+
 class Reactor
-  def initialize(file:)
+  def initialize(file:, num_fuels: 1)
     @reactions = {}
     parse_file(file)
     make_graph
-    @rr = [Element.new(name: "FUEL", quantity: 1)] ##this is just a list of the things that need to be expanded at a certain instance. initialize with 1 fuel.
+    @rr = [Element.new(name: "FUEL", quantity: num_fuels)] ##this is just a list of the things that need to be expanded at a certain instance. initialize with 1 fuel.
+    @excess_ore = 0
   end
 
-  attr_reader :reactions, :graph, :levels, :rr
+  attr_reader :reactions, :graph, :levels, :rr, :excess_ore
 
   def make_graph
     edges = []
@@ -44,9 +53,6 @@ class Reactor
     end
     levels
   end
-
-
-
 
   def parse_file(file)
     lines = File.readlines(file).map{ |l| l.strip.chomp }
@@ -79,7 +85,7 @@ class Reactor
       items_to_expand = rr.select{ |el| items_at_level.include?(el.name) }
 
       items_to_expand.each do |item|
-        expand(item) ##replace with parents
+        expand(item, level: level) ##replace with parents
       end
       compress_unify #chunk items together
       level -= 1
@@ -90,7 +96,7 @@ class Reactor
 
   ## this process isn't complete yet. I need to put into account what is happening with the quantity.
   ## no partial reaction but excess is okay.
-  def expand(item)
+  def expand(item, level: nil)
     if !item.is_a?(Element)
       item = rr.find{ |x| x.name == item }
     end
