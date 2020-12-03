@@ -1,15 +1,16 @@
 require './base'
 
 def part1(file: 'p2_test.txt')
-  lines = File.readlines(file).map { |l| parse(l) }
-  lines.count { |l| valid?(*l) }
+  input = read_file(file: file)
+  input.count { |l| valid?(*l) }
+end
+
+def read_file(file:)
+  File.readlines(file).map { |line| parse(line) }
 end
 
 def parse(line)
-  range, letter, password = line.split(" ")
-  minc, maxc = range.split("-").map(&:to_i)
-  letter = letter[0..-2]
-  [minc, maxc, letter, password]
+  line.chomp.strip.split(/\W+/).map{ |word| Integer(word) rescue word }
 end
 
 def valid?(minc, maxc, letter, password)
@@ -18,10 +19,14 @@ def valid?(minc, maxc, letter, password)
 end
 
 def valid2?(minc, maxc, letter, password)
-  (password[minc - 1] == letter && password[maxc - 1] != letter) || (password[minc - 1] != letter && password[maxc - 1] == letter)
+  (password[minc - 1] == letter) ^ (password[maxc - 1] == letter)
 end
 
 def part2(file: 'p2_test.txt')
-  lines = File.readlines(file).map { |l| parse(l) }
-  lines.count { |l| valid2?(*l) }
+  input = read_file(file: file)
+  input.count { |l| valid2?(*l) }
 end
+
+# Running
+# puts part1(file: 'p2.txt')
+# puts part2(file: 'p2.txt')
