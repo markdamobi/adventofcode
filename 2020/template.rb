@@ -1,11 +1,11 @@
 require './base'
 
-def part1(file: 'p3_test.txt')
+def part1(file: 'px_test.txt')
   input = read_file(file: file)
   #process input
 end
 
-def part2(file: 'p3_test.txt')
+def part2(file: 'px_test.txt')
   input = read_file(file: file)
 end
 
