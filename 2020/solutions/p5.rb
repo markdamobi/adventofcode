@@ -1,16 +1,16 @@
-require './base'
+require_relative "../lib/base"
 
-def part1(file = 'p5_test.txt')
-  input = read_file(file)
+def part1(basename = 'p5_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
 
   input.map{ |seat| get_id(seat) }.max
 end
 
-def part2(file = 'p5_test.txt')
-  input = read_file(file)
+def part2(basename = 'p5_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
   ids = input.map{ |seat| get_id(seat) }.sort
 
-  ids.each_cons(2).find { |x, y| x < y-1 }
+  ids.each_cons(2).find { |x, y| x < y-1 }[0] + 1
 end
 
 def get_id(seat)

@@ -1,7 +1,7 @@
-require './base'
+require_relative "../lib/base"
 
-def part1(file: 'p3_test.txt')
-  input = read_file(file: file)
+def part1(basename = 'p3_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
   Tree.new(input: input).tap(&:travel).tree_count
 end
 
@@ -26,8 +26,8 @@ class Tree
   end
 end
 
-def part2(file: 'p3_test.txt')
-  input = read_file(file: file)
+def part2(basename = 'p3_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
   slopes = [[1,1], [3,1], [5,1], [7,1], [1,2]]
 
   slopes.map do |right, down|
@@ -36,7 +36,7 @@ def part2(file: 'p3_test.txt')
 end
 
 ### Helpers
-def read_file(file:)
+def read_file(file)
   File.readlines(file).map { |line| parse(line) }
 end
 

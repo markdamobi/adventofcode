@@ -1,11 +1,11 @@
-require './base'
+require_relative "../lib/base"
 
-def part1(file: 'p2_test.txt')
-  input = read_file(file: file)
+def part1(basename = 'p2_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
   input.count { |l| valid?(*l) }
 end
 
-def read_file(file:)
+def read_file(file)
   File.readlines(file).map { |line| parse(line) }
 end
 
@@ -22,8 +22,8 @@ def valid2?(minc, maxc, letter, password)
   (password[minc - 1] == letter) ^ (password[maxc - 1] == letter)
 end
 
-def part2(file: 'p2_test.txt')
-  input = read_file(file: file)
+def part2(basename = 'p2_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
   input.count { |l| valid2?(*l) }
 end
 

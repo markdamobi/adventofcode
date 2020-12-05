@@ -1,7 +1,7 @@
-require './base'
+require_relative "../lib/base"
 
-def part1(file: 'p4_test.txt')
-  input = read_file(file: file)
+def part1(basename = 'p4_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
 
   input.count do |password|
     Password.new(password).valid?
@@ -78,8 +78,9 @@ class Password2
   end
 end
 
-def part2(file: 'p4_test_valid.txt')
-  input = read_file2(file: file)
+def part2(basename = 'p4_test_valid.txt')
+  input = read_file2(File.join(INPUT_DIR, basename))
+  binding.pry
   input.count do |password|
     pwd = Password2.new(password)
     pwd.valid2?
@@ -87,11 +88,11 @@ def part2(file: 'p4_test_valid.txt')
 end
 
 ### Helpers
-def read_file(file:)
+def read_file(file)
   File.read(file).split("\n\n")
 end
 
-def read_file2(file:)
+def read_file2(file)
   File.read(file).split("\n\n").map{|l| l.split(/\s+/).map{|x| x.split(":") }.to_h}
 end
 

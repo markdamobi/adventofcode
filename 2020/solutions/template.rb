@@ -1,16 +1,16 @@
-require './base'
+require_relative "../lib/base"
 
-def part1(file: 'px_test.txt')
-  input = read_file(file: file)
+def part1(basename = 'px_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
   #process input
 end
 
-def part2(file: 'px_test.txt')
-  input = read_file(file: file)
+def part2(basename = 'px_test.txt')
+  input = read_file(File.join(INPUT_DIR, basename))
 end
 
 ### Helpers
-def read_file(file:)
+def read_file(file)
   File.readlines(file).map { |line| parse(line) }
 end
 
